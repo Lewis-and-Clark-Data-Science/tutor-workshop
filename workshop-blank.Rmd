@@ -1,0 +1,247 @@
+### The basics of coding with R
+
+R is unique among programming languages, in that it was created primarily for use in Statistics. In addition to the common functionality of other languages like python and java, R contains many built-in functions that make performing statistical analyses simple.
+
+Because if its relatively narrow focus, many operations that would be cumbersome in other languages can be done in just a few lines of code (or often one!).
+
+### R objects and data types
+
+Most of R's functionality is based around objects called vectors. These are analogous to lists or arrays in other programming languages, with some key differences: R vectors are exclusively 1-dimensional (can't contain other vectors), and they can only contain one data type.
+
+```{r}
+# basic data types
+# strings, or character vectors
+
+
+
+# integers
+
+# doubles or floats
+
+# logical values
+
+
+# missing or undefined values
+
+```
+
+```{r}
+# creating vectors using c()
+
+
+# multiple data types coerced into single type
+
+
+# creating a sequential integer vector
+
+
+```
+
+R's use of mathematical and logical operators is not particularly different from other languages:
+
+```{r}
+
+#mathematical operators
+#addition/subtraction
+#multiplication
+#power (also 10**4)
+#division
+#remainder/modulus
+#floor division
+
+#logical operators
+
+```
+
+R can easily produce summary statistics for a given vector:
+
+```{r}
+vec <- 1:20
+
+ # mean
+
+ # standard deviation
+
+ # length/count
+
+ # variance
+
+ # maximum
+
+ # minimum
+
+ # median
+
+ # quantiles
+
+ # summary
+```
+
+While vectors form the basis of most operations in R, in practice, we generally deal with data frames. These objects are like spreadsheets, and can be made up of many vectors in the form of columns.
+
+Data frames can be indexed by the numbers or names of their rows and columns:
+
+```{r}
+mtcars # a test data set already loaded in r
+
+ # use $ to select just the mpg column
+
+ # select the first column
+
+ # select the first row
+
+ # select the first column
+
+ # select the first value from the first column
+
+ # select the first three columns
+
+ # select the first three rows
+
+```
+
+### Base R vs the tidyverse
+
+There are two main approaches to dealing with data frames. The first is what is called "base R", which uses primarily built-in functions of the language.
+
+The other approach uses the "tidyverse", which is a secondary suite of libraries/packages that contains its own distinct workflow.
+
+Both of these approaches are used in classes at L&C, and generally a class will use one approach exclusively.
+
+We will approach the following problems using both base R and the tidyverse:
+
+-   Using the Palmer penguins data set: explore the relationship between bill length and body mass among Adelie penguins.
+
+-   Determine if there is a significant difference in bill length between Adelie and Chinstrap penguins.
+
+First, let's do base R:
+
+```{r}
+# relationship between bill length and body mass among Adelie penguins
+
+# download the penguin data
+install.packages("palmerpenguins")
+# load in the downloaded data
+library(palmerpenguins)
+# take a look at the data
+penguins
+# take a look at bill length
+penguins$bill_length_mm
+# take a look at body mass
+penguins$body_mass_g
+# both columns at once
+penguins[c("bill_length_mm", "body_mass_g")]
+
+ # filter for just adelie penguins. This expression asks for all rows such that the value of the species column is "Adelie"
+adelie_length <- penguins[penguins$species=="Adelie"]$bill_length_mm
+
+adelie_mass <- penguins[penguins$species=="Adelie",]$body_mass_g
+
+# we can create a scatter plot using the plot() function
+
+plot(adelie_mass, adelie_length)
+
+# here we'd like to plot the bill length column vs the body mass column
+
+
+# we can also create a linear regression model of the data using the lm() function
+
+model <- lm(adelie_length ~ adelie_mass)
+
+# summary() will display detailed results of statistical tests and models created in R
+
+summary(model)
+
+plot(adelie_mass, adelie_length)
+abline(model)
+```
+
+```{r}
+# difference in bill length between Adelie and Chinstrap penguins
+
+#filter data
+adelie <- penguins[penguins$species=="Adelie",]$bill_length_mm
+
+chinstrap <- penguins[penguins$species=="Chinstrap",]$bill_length_mm
+
+chinstrap
+
+# histogram for adelie
+
+hist(adelie)
+
+# histogram for chinstrap
+
+hist(chinstrap)
+
+# get summary statistics
+
+summary(adelie)
+sd(adelie, na.rm=TRUE)
+
+# perform a two-sample t-test on the data
+
+t.test(adelie, chinstrap)
+
+```
+
+Now let's do the same problems using the tidyverse. One of the most useful and confusing elements of the tidyverse is the pipe: `%>%`. The pipe passes the output of one tidyverse function to the next, allowing you to chain several steps together into a single expression.
+
+```{r}
+# must always load packages before using them
+install.packages("tidyverse")
+library(tidyverse)
+# take a look at the data
+glimpse(penguins)
+# select allows you to select columns, similar to $ or data[c(col, names)]
+
+select(penguins, species, sex, bill_length_mm)
+
+# filter() allows you to filter the rows of the data based on 1 or more conditions
+
+filter(penguins, species=="Adelie")
+
+# using the pipe
+
+penguins %>% 
+  filter(species=="Adelie") %>% 
+  select(species, sex, bill_depth_mm)
+
+
+# the tidyverse has its own visualization library called ggplot. Instead of the pipe, ggplot uses + to string things together
+
+penguins %>% 
+  filter(species=="Adelie") %>% 
+  select(species, sex, bill_depth_mm, body_mass_g) %>% 
+  ggplot(aes(x=body_mass_g, y=bill_depth_mm)) +
+  geom_point() +
+  geom_smooth(method="lm")
+
+
+# you can also chain the whole thing together!
+
+# add in a linear model
+
+
+
+```
+
+```{r}
+# difference in bill length between Adelie and Chinstrap penguins
+
+# with some extra knowledge, tidyverse can create attractive histograms with one expression
+
+penguins %>% 
+  filter(species=="Adelie" | species=="Chinstrap" ) %>% 
+  ggplot(aes(x=bill_length_mm, fill=species)) +
+  geom_histogram(position="identity", alpha=0.5)
+
+# we can also get an organized report of summary statistics
+
+penguins %>% 
+  group_by(species) %>% 
+  summarize(mean=mean(bill_length_mm, na.rm=TRUE), sd = sd(bill_length_mm, na.rm=TRUE))
+
+# t-test is actually the same as base R. This is the case for most statistical tests.
+
+```

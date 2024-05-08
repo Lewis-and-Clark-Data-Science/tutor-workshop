@@ -1,0 +1,480 @@
+---
+title: "Function documentation"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(palmerpenguins)
+```
+
+### c()
+
+Combine values into a vector
+
+```{r eval=FALSE}
+c(...)
+```
+
+`...` - any number of values
+
+```{r}
+x <- c(1, 5, 7, 4, 77, 3, "a")
+x
+```
+
+### list()
+
+Creates a list object out of multiple vectors
+
+```{r eval=FALSE}
+list(...)
+```
+
+`...` - any number of vectors
+
+```{r}
+l <- list(c(1, 2, 3), c("a", "b", "c"), c(1, "a", 3, "b"))
+l
+```
+
+### data.frame()
+
+Creates a dataframe object when supplied with column names and values. Each column must have the same number of values
+
+```{r eval=FALSE}
+data.frame(…)
+```
+
+`...` - one or more name and value pairs, in the form `name=values`
+
+```{r}
+df <- data.frame(fruit = c("apple", "orange", "banana"), color = c("red", "orange", "yellow"))
+df
+```
+
+### head()
+
+displays the first `n` rows of a data frame, or the first `n` values of a list or vector
+
+```{r eval=FALSE}
+head(x, n)
+```
+
+`x` - data frame, vector, or list\
+`n` - number of values to return
+
+```{r}
+#df <- data.frame(fruit = c("apple", "orange", "banana"), color = c("red", "orange", "yellow"))
+#head(df, 2)
+
+head(penguins, 10)
+```
+
+### tail()
+
+displays the last `n` rows of a data frame, or the last `n` values of a list or vector
+
+```{r eval=FALSE}
+tail(x, n)
+```
+
+`x` - data frame, vector, or list\
+`n` - number of values to return
+
+```{r}
+#df <- data.frame(fruit = c("apple", "orange", "banana"), color = c("red", "orange", "yellow"))
+#tail(df, 2)
+tail(penguins, 10)
+```
+
+### str()
+
+Displays the internal structure of an object
+
+```{r eval=FALSE}
+str(object)
+```
+
+`object` - any R object you'd like information about
+
+```{r}
+l <- list(c(1, 2, 3), c("a", "b", "c"), c(1, "a", 3, "b"))
+str(l)
+```
+
+### summary()
+
+Reports summary statistics for a given object. Useful for reporting information on data and models.
+
+```{r eval=FALSE}
+summary(object)
+```
+
+`object` - any R object you'd like to summarize
+
+```{r}
+summary(penguins)
+```
+
+### table()
+
+Uses the cross-classifying factors to build a contingency table of the counts at each combination of factor levels. Must include useNA option
+
+```{r eval=FALSE}
+table(..., useNA = c("no", "ifany", "always"))
+```
+
+`...` - data to summarize with a contingency table\
+`useNA` - how to handle NA values
+
+```{r}
+table(penguins$species, penguins$island, useNA="no")
+```
+
+### install.packages()
+
+Install an R package
+
+```{r eval=FALSE}
+install.packags(package)
+```
+
+`package` - name of package to be installed, in quotes
+
+```{r eval=FALSE}
+install.packages("dplyr")
+```
+
+### library()
+
+Load an R package
+
+```{r eval=FALSE}
+library(package)
+```
+
+`package` - name of package to load
+
+```{r}
+library(dplyr)
+```
+
+### read_csv()
+
+Read a csv file into a tibble
+
+```{r eval=FALSE}
+read_csv(filename, sep = ",")
+```
+
+`filename`- name/path to the desired file\
+`sep` - value delimiter used in file (usually a comma)
+
+```{r eval=FALSE}
+read_csv("data.csv")
+```
+
+### read_dta()
+
+Read a Stata file into a tibble
+
+```{r eval=FALSE}
+read_csv(filename)
+```
+
+`filename`- name/path to the desired file
+
+```{r eval=FALSE}
+read_csv("data.dta")
+```
+
+### read_sav()
+
+Read a SPSS file into a tibble
+
+```{r eval=FALSE}
+read_csv(filename)
+```
+
+`filename`- name/path to the desired file
+
+```{r eval=FALSE}
+read_csv("data.dta")
+```
+
+### mean()
+
+Calculates the arithmetic mean of a vector or column. Must include na.rm option.
+
+```{r eval=FALSE}
+mean(x, na.rm = FALSE)
+```
+
+`x`- data to calculate the mean of\
+`na.rm` - TRUE or FALSE, whether to include NA values or not
+
+```{r}
+mean(penguins$bill_length_mm, na.rm = TRUE)
+```
+
+### filter()
+
+Selects only rows from the data frame that satisfy the given criteria
+
+```{r eval=FALSE}
+filter(.data, ...)
+```
+
+`.data`- data frame to filter (unless piped)\
+`...` - at least one conditional statement to filter with
+
+```{r}
+filter(penguins, species=="Gentoo")
+
+penguins %>% 
+  filter(species=="Gentoo")
+```
+
+### is.na()
+
+Find NA values in a vector
+
+```{r eval=FALSE}
+is.na(x)
+```
+
+`x` - vector we'd like to find NAs in
+
+```{r}
+is.na(penguins$sex)
+```
+
+### write_csv()
+
+Write a data frame to a .csv file
+
+```{r eval=FALSE}
+write_csv(df, path)
+```
+
+`df` - data frame to save\
+`path` - path to new file
+
+```{r eval=FALSE}
+write_csv(penguins, "data/penguins.csv")
+```
+
+### save() - write objects to a .RData file ???
+
+### count()
+
+Count unique occurrences in a data frame
+
+```{r eval=FALSE}
+count(df, vars)
+```
+
+`df` - data frame\
+`vars` - variables to count unique values of
+
+```{r}
+count(penguins, vars=island)
+```
+
+mutate() Add a new column to a dataframe or change an existing column
+
+```{r eval=FALSE}
+mutate(.data, ...)
+```
+
+`df` - data frame to change (unless piped)\
+`...` - key value pairs of `name=vector`
+
+```{r}
+mutate(penguins, bill_ratio=bill_length_mm/bill_depth_mm)
+
+penguins %>% 
+  mutate(bill_ratio=bill_length_mm/bill_depth_mm)
+```
+
+### replace_na()
+
+Replace NA values in a data frame with a given value
+
+```{r eval=FALSE}
+if_na(x, value)
+```
+
+`x` - vector to replace NA values in\
+`value` - list of column value pairs to replace NA values with
+
+```{r}
+penguins %>% 
+  replace_na(list(bill_depth_mm = 0, bill_length_mm = 0))
+```
+
+### if_else()
+
+Conditional statement, if true, return one value, otherwise a second value.
+
+```{r eval=FALSE}
+if_else(condition, true, false, missing = NULL)
+```
+
+`condition` - true/false logical statement\
+`true` - value to return if true\
+`false` - value to return if false\
+`missing`- value to return if data is missing
+
+```{r}
+if_else(penguins$bill_depth_mm > 18, "long", "short", missing = "missing")
+```
+
+### case_when()
+
+Conditional statements, takes any number of conditions and evaluates in order
+
+```{r eval=FALSE}
+case_when(...)
+```
+
+`...` - one or more pairs of conditions and values
+
+```{r}
+case_when(penguins$bill_depth_mm > 18 ~ "long",
+          penguins$bill_depth_mm > 20 ~ "very long",
+          penguins$bill_depth_mm > 15 ~ "short",
+          penguins$bill_depth_mm > 10 ~ "very short",
+          TRUE ~ "other"
+          )
+```
+
+### as.numeric()
+
+Convert object to numeric values
+
+```{r eval=FALSE}
+as.numeric(x)
+```
+
+`x` - vector to convert
+
+```{r}
+x <- c('1', '2', '3')
+as.numeric(x)
+```
+
+as.character() Convert object to string values
+
+```{r eval=FALSE}
+as.character(x)
+```
+
+`x` - vector to convert
+
+```{r}
+x <- c(1, 2, 3)
+as.character(x)
+```
+
+### rename()
+
+Rename one or more columns in a data frame
+
+```{r eval=FALSE}
+rename(.data, ...)
+```
+
+`.data`- data frame to rename columns of (unless piped)\
+`...` - one or more new=old column name pairs
+
+```{r}
+rename(penguins, mass = body_mass_g, flipper = flipper_length_mm)
+
+penguins %>% 
+  rename(mass = body_mass_g, flipper = flipper_length_mm)
+```
+
+### select()
+
+Select one or more columns of a data frame
+
+```{r eval=FALSE}
+select(.data, ...)
+```
+
+`.data`- data frame to select columns of (unless piped)\
+`...` - one or more column names
+
+```{r}
+select(penguins, island, species)
+
+penguins %>% 
+  select(island, species)
+```
+
+### hist()
+
+Plot a histogram, given a vector of data
+
+```{r eval=FALSE}
+hist(x)
+```
+
+`x` - data to plot
+
+```{r}
+hist(penguins$bill_length_mm)
+```
+
+### summarize()
+
+Generates a dataframe displaying the results of chosen functions on the data. Often used with group_by().
+
+```{r eval=FALSE}
+summarize(.data, ...)
+```
+
+`.data`- data frame to summarize (unless piped)\
+`...` - one or more summary methods of the form `name=method(x)`
+
+```{r}
+summarize(penguins, mean_bill=mean(bill_length_mm, na.rm=TRUE), sd_bill=sd(bill_length_mm, na.rm=TRUE))
+
+penguins %>% 
+  group_by(species) %>% 
+  summarize(mean_bill=mean(bill_length_mm, na.rm=TRUE),sd_bill=sd(bill_length_mm, na.rm=TRUE))
+```
+
+### group_by()
+
+Often used with summarize(), groups the data in the data frame based on one or more columns.
+
+```{r eval=FALSE}
+group_by(.data, ...)
+```
+
+`.data`- data frame to summarize (unless piped)\
+`...` - one or more columns to group by, in order
+
+```{r}
+penguins %>% 
+  group_by(island, species) %>% 
+  summarize(mean_bill=mean(bill_length_mm, na.rm=TRUE),sd_bill=sd(bill_length_mm, na.rm=TRUE))
+```
+
+### left_join()
+
+Joins dataframe x with dataframe y, based on the rows/key in x. Rows present in y and not present in x will be omitted. Rows present in x but not y will be kept.
+
+```{r eval=FALSE}
+left_join(x,y)
+```
+
+`x` - data to join `y` - data to join to x
+
+```{r}
+
+```
